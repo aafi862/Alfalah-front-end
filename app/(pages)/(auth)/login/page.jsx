@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/app/Redux-store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { useLoginMutation } from "@/app/Redux-store/services/authApi";
+import FullPageLoader from "@/components/common/Loader";
+import { getDashboardPathByRole, isValidRole } from "@/lib/access-control";
 
 const getApiErrorMessage = (error) => {
   if (!error) return "Login failed";
@@ -24,15 +26,17 @@ export default function LoginPage() {
   const router = useRouter();
   const auth = useSelector((state) => state.auth);
   const [login, { isLoading }] = useLoginMutation();
+  const { isAuthenticated, role, isHydrated } = auth;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (auth.isAuthenticated) {
-      router.replace(`/dashboard/${auth.role}`);
+    if (!isHydrated) return;
+    if (isAuthenticated && isValidRole(role)) {
+      router.replace(getDashboardPathByRole(role));
     }
-  }, [auth.isAuthenticated, auth.role, router]);
+  }, [isAuthenticated, isHydrated, role, router]);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -44,11 +48,15 @@ export default function LoginPage() {
       const data = await login({ email, password }).unwrap();
       dispatch(setAuth(data));
       toast.success("Login successful");
-      router.push(`/dashboard/${data.role}`);
+      router.push(getDashboardPathByRole(data.role));
     } catch (error) {
       toast.error(getApiErrorMessage(error));
     }
   };
+
+  if (!isHydrated) {
+    return <FullPageLoader title="Initializing session" subtitle="Please wait..." />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">

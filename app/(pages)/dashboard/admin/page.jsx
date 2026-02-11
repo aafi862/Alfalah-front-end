@@ -2,10 +2,11 @@
 
 import Card from "@/components/common/Card";
 import DashboardLayout from "../DashboardLayout";
+import { ROLES } from "@/lib/access-control";
 
 export default function AdminDashboard() {
     return (
-        <DashboardLayout allowedRoles={["admin"]}>
+        <DashboardLayout allowedRoles={[ROLES.ADMIN]}>
             <div className="space-y-6">
                 <h1 className="text-2xl font-bold">Admin Dashboard</h1>
 

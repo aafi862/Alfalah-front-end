@@ -1,15 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout, updateAccessToken } from "@/app/Redux-store/slices/authSlice";
+import { getRoleFromEmail } from "@/lib/access-control";
 
 const mockDelay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const resolveRoleFromEmail = (email) => {
-  if (email.endsWith("@admin.com")) return "admin";
-  if (email.endsWith("@company.com")) return "company";
-  if (email.endsWith("@agent.com")) return "agent";
-  if (email.endsWith("@user.com")) return "user";
-  return null;
-};
 
 const getErrorMessage = (error) => {
   if (!error) return "Unexpected error";
@@ -37,7 +30,7 @@ const maybeMockRequest = async (args) => {
       return { error: { status: 400, data: { message: "Email and password are required" } } };
     }
 
-    const role = resolveRoleFromEmail(email);
+    const role = getRoleFromEmail(email);
     if (!role) {
       return { error: { status: 401, data: { message: "Invalid credentials" } } };
     }

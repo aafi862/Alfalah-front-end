@@ -1,39 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import Button from "./Button";
-
-const menus = {
-    user: [
-        { label: "Overview", href: "/dashboard/user" },
-        { label: "Settings", href: "/dashboard/user/settings" },
-    ],
-    admin: [
-        { label: "Dashboard", href: "/dashboard/admin" },
-        { label: "Manage Users", href: "/dashboard/admin/manage-users" },
-    ],
-    company: [
-        { label: "Policies", href: "/dashboard/company/policies" },
-        { label: "Employees", href: "/dashboard/company/employees" },
-    ],
-    agent: [
-        { label: "Leads", href: "/dashboard/agent/leads" },
-        { label: "Tasks", href: "/dashboard/agent/tasks" },
-    ],
-};
+import { NAVIGATION_BY_ROLE } from "@/lib/access-control";
 
 export default function Sidebar({ role, onLogout }) {
+    const pathname = usePathname();
+
     return (
         <aside className="w-64 bg-white border-r p-4 flex flex-col min-h-screen">
             <h2 className="text-lg font-semibold mb-6">Dashboard</h2>
 
             <ul className="flex-1 space-y-2">
-                {(menus[role] || []).map((menu) => (
+                {(NAVIGATION_BY_ROLE[role] || []).map((menu) => (
                     <li key={menu.href}>
                         <Link
                             href={menu.href}
-                            className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                            className={`block px-3 py-2 rounded-md text-gray-700 transition-colors ${pathname === menu.href ? "bg-gray-200 font-medium" : "hover:bg-gray-100"
+                                }`}
                         >
                             {menu.label}
                         </Link>

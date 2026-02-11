@@ -2,10 +2,11 @@
 
 import Card from "@/components/common/Card";
 import DashboardLayout from "../DashboardLayout";
+import { ROLES } from "@/lib/access-control";
 
 export default function AgentDashboard() {
     return (
-        <DashboardLayout allowedRoles={["agent"]}>
+        <DashboardLayout allowedRoles={[ROLES.AGENT]}>
             <div className="space-y-6">
                 <h1 className="text-2xl font-bold">Agent Dashboard</h1>
 

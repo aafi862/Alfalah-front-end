@@ -4,38 +4,28 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
-const isBrowser = typeof window !== "undefined";
-
-const saveAuthToStorage = (auth) => {
-    if (!isBrowser) return;
-    localStorage.setItem("auth", JSON.stringify(auth));
+const initialState = {
+    user: null,
+    accessToken: null,
+    refreshToken: null,
+    role: null,
+    isAuthenticated: false,
+    isHydrated: false,
 };
-
-const removeAuthFromStorage = () => {
-    if (!isBrowser) return;
-    localStorage.removeItem("auth");
-};
-
-const getInitialAuthState = () => {
-    if (!isBrowser) return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
-
-    const stored = localStorage.getItem("auth");
-    if (!stored) return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
-
-    try {
-        const parsed = JSON.parse(stored);
-        return { ...parsed, isAuthenticated: true };
-    } catch {
-        return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
-    }
-};
-
-const initialState = getInitialAuthState();
 
 const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
+        hydrateAuth: (state, action) => {
+            const payload = action.payload || {};
+            state.user = payload.user || null;
+            state.accessToken = payload.accessToken || null;
+            state.refreshToken = payload.refreshToken || null;
+            state.role = payload.role || null;
+            state.isAuthenticated = Boolean(payload.accessToken && payload.role);
+            state.isHydrated = true;
+        },
         setAuth: (state, action) => {
             const { user, accessToken, refreshToken, role } = action.payload;
             state.user = user;
@@ -43,7 +33,7 @@ const authSlice = createSlice({
             state.refreshToken = refreshToken;
             state.role = role;
             state.isAuthenticated = true;
-            saveAuthToStorage({ user, accessToken, refreshToken, role });
+            state.isHydrated = true;
         },
         logout: (state) => {
             state.user = null;
@@ -51,16 +41,13 @@ const authSlice = createSlice({
             state.refreshToken = null;
             state.role = null;
             state.isAuthenticated = false;
-            removeAuthFromStorage();
+            state.isHydrated = true;
         },
         updateAccessToken: (state, action) => {
             state.accessToken = action.payload;
-            if (!isBrowser) return;
-            const stored = JSON.parse(localStorage.getItem("auth") || "{}");
-            saveAuthToStorage({ ...stored, accessToken: action.payload });
         },
     },
 });
 
-export const { setAuth, logout, updateAccessToken } = authSlice.actions;
+export const { hydrateAuth, setAuth, logout, updateAccessToken } = authSlice.actions;
 export default authSlice.reducer;
