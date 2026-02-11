@@ -27,7 +27,7 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
 
         // If not authenticated → redirect to login
         if (!auth.isAuthenticated) {
-            router.replace("/login");
+            router.replace("/");
         }
 
         // If authenticated but role is not allowed → redirect to their dashboard
@@ -37,12 +37,8 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
     }, [auth, authChecked, allowedRoles, router]);
 
     const handleLogout = () => {
-        setLoggingOut(true);
-        setTimeout(() => {
-            dispatch(logout());
-            setLoggingOut(false);
-            router.replace("/login");
-        }, 2000);
+        dispatch(logout());
+        router.replace("/");
     };
 
     // **Render loader until auth is checked or logging out**
