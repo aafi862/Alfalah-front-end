@@ -9,22 +9,20 @@ import Sidebar from "@/components/common/Sidebar";
 export default function DashboardLayout({ children }) {
     const auth = useSelector((state) => state.auth);
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
+    const [checkingAuth, setCheckingAuth] = useState(true);
     console.log("auth guard page called")
-    // Auth guard
+
     useEffect(() => {
         if (!auth.isAuthenticated) {
             router.replace("/");
-
         } else {
-            console.log("loading ture :")
             setTimeout(() => {
-                setLoading(false);
-            }, 3000);
+                setCheckingAuth(false);
+            }, 2000);
         }
-    }, [auth]);
+    }, [auth.isAuthenticated, router]);
 
-    if (loading) return <Loader />;
+    if (checkingAuth) return <Loader />;
 
     return (
         <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">

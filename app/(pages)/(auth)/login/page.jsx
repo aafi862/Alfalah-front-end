@@ -4,7 +4,7 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { toast } from "sonner";
 import { Lock, Mail } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/app/Redux-store/slices/authSlice";
 import { useRouter } from "next/navigation";
@@ -19,14 +19,14 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     // Redirect if already logged in
-    console.log("auth state :", auth)
+    console.log("Login page called "", auth)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (auth.isAuthenticated) {
             router.replace(`/dashboard/${auth.role}`);
             return;
         }
-    }, [auth])
+    }, [auth.isAuthenticated, router])
 
     const handleLogin = async () => {
         if (!email || !password) return toast.error("Email & Password required");
