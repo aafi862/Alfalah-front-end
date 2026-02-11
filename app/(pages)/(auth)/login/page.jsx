@@ -19,9 +19,9 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     // Redirect if already logged in
-    console.log("Login page called "", auth)
+    console.log("Login page called ", auth)
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (auth.isAuthenticated) {
             router.replace(`/dashboard/${auth.role}`);
             return;

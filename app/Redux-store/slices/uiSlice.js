@@ -1,19 +1,20 @@
-
-
+// Redux slice for UI states
+// Example: global loader, modals, alerts
 import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  loading: false,
+};
 
 const uiSlice = createSlice({
   name: "ui",
-  initialState: { darkMode: false, loading: false },
+  initialState,
   reducers: {
-    toggleDarkMode: (state) => {
-      state.darkMode = !state.darkMode;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
   },
 });
 
-export const { toggleDarkMode, setLoading } = uiSlice.actions;
+export const { setLoading } = uiSlice.actions;
 export default uiSlice.reducer;
