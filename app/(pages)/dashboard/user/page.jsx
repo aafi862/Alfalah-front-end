@@ -1,23 +1,9 @@
 "use client";
 
 import Card from "@/components/common/Card";
-import { useRouter } from "next/navigation";
-
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import DashboardLayout from "../DashboardLayout";
 
 export default function UserDashboard() {
-    const auth = useSelector((state) => state.auth);
-    const router = useRouter();
-
-    useEffect(() => {
-        if (!auth.isAuthenticated || auth.role !== "user") {
-            router.replace(`/dashboard/${auth.role || "user"}`);
-        }
-    }, [auth, router]);
-
-
     return (
         <DashboardLayout allowedRoles={["user"]}>
             <div className="space-y-6">

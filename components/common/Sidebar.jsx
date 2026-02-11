@@ -43,7 +43,7 @@ export default function Sidebar({ role, onLogout }) {
 
             <div className="mt-auto pt-4 border-t">
                 <Button onClick={onLogout} className="w-full flex items-center justify-center gap-2">
-                    <LogOut className="h-4 w-4" /> Logoutt
+                    <LogOut className="h-4 w-4" /> Logout
                 </Button>
             </div>
         </aside>

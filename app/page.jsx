@@ -1,9 +1,5 @@
-import React from 'react'
-import LoginPage from './(pages)/(auth)/login/page'
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return <LoginPage />
-
+export default function HomePage() {
+  redirect("/login");
 }
-
-export default page

@@ -4,8 +4,20 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
+const isBrowser = typeof window !== "undefined";
+
+const saveAuthToStorage = (auth) => {
+    if (!isBrowser) return;
+    localStorage.setItem("auth", JSON.stringify(auth));
+};
+
+const removeAuthFromStorage = () => {
+    if (!isBrowser) return;
+    localStorage.removeItem("auth");
+};
+
 const getInitialAuthState = () => {
-    if (typeof window === "undefined") return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
+    if (!isBrowser) return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
 
     const stored = localStorage.getItem("auth");
     if (!stored) return { user: null, accessToken: null, refreshToken: null, role: null, isAuthenticated: false };
@@ -31,7 +43,7 @@ const authSlice = createSlice({
             state.refreshToken = refreshToken;
             state.role = role;
             state.isAuthenticated = true;
-            localStorage.setItem("auth", JSON.stringify({ user, accessToken, refreshToken, role }));
+            saveAuthToStorage({ user, accessToken, refreshToken, role });
         },
         logout: (state) => {
             state.user = null;
@@ -39,12 +51,13 @@ const authSlice = createSlice({
             state.refreshToken = null;
             state.role = null;
             state.isAuthenticated = false;
-            localStorage.removeItem("auth");
+            removeAuthFromStorage();
         },
         updateAccessToken: (state, action) => {
             state.accessToken = action.payload;
+            if (!isBrowser) return;
             const stored = JSON.parse(localStorage.getItem("auth") || "{}");
-            localStorage.setItem("auth", JSON.stringify({ ...stored, accessToken: action.payload }));
+            saveAuthToStorage({ ...stored, accessToken: action.payload });
         },
     },
 });

@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Alfalah Front-End
 
-## Getting Started
+Next.js App Router project for Alfalah Insurance portal with role-based dashboards and Redux Toolkit + RTK Query.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router)
+- React 19
+- Redux Toolkit
+- RTK Query
+- Tailwind CSS + shadcn/ui primitives
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env` from `.env.example`:
 
-## Learn More
+```bash
+NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_ENABLE_API_MOCK=true
+```
 
-To learn more about Next.js, take a look at the following resources:
+- Keep `NEXT_PUBLIC_ENABLE_API_MOCK=true` to use mocked API responses.
+- Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_ENABLE_API_MOCK=false` when backend is ready.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Auth Mock Accounts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use any password with these email domains:
 
-## Deploy on Vercel
+- `@admin.com` -> Admin dashboard
+- `@company.com` -> Company dashboard
+- `@agent.com` -> Agent dashboard
+- `@user.com` -> User dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Example: `john@admin.com`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Architecture
+
+- `app/Redux-store/services/baseApi.js`
+  - Central RTK Query `baseApi`
+  - Auth header injection
+  - 401 refresh token retry flow
+  - Mock-first fallback for local development
+- `app/Redux-store/services/authApi.js`
+  - Auth endpoints (`login` mutation)
+
+## Route Structure
+
+- `/login`
+- `/dashboard/admin`
+- `/dashboard/admin/manage-users`
+- `/dashboard/agent`
+- `/dashboard/agent/leads`
+- `/dashboard/agent/tasks`
+- `/dashboard/company`
+- `/dashboard/company/policies`
+- `/dashboard/company/employees`
+- `/dashboard/user`
+- `/dashboard/user/settings`
