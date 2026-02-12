@@ -1,32 +1,58 @@
 "use client";
 
-import Card from "@/components/common/Card";
+import { useMemo } from "react";
 import DashboardLayout from "../DashboardLayout";
 import { ROLES } from "@/lib/access-control";
+import PageHeader from "@/components/dashboard/PageHeader";
+import KpiCard from "@/components/dashboard/KpiCard";
+import DataTableCard, { StatusBadge } from "@/components/dashboard/DataTableCard";
+
+const approvals = [
+  { id: 1, type: "Agent Onboarding", owner: "Ayesha Khan", submittedAt: "Today", status: "Pending" },
+  { id: 2, type: "Company Verification", owner: "Rimsha Foods", submittedAt: "Yesterday", status: "Pending" },
+  { id: 3, type: "Policy Exception", owner: "Nadeem Ali", submittedAt: "2 days ago", status: "Active" },
+  { id: 4, type: "Claim Escalation", owner: "City Health", submittedAt: "2 days ago", status: "Overdue" },
+];
 
 export default function AdminDashboard() {
-    return (
-        <DashboardLayout allowedRoles={[ROLES.ADMIN]}>
-            <div className="space-y-6">
-                <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+  const kpis = useMemo(
+    () => [
+      { title: "Total Users", value: "1,284", delta: "+6.8% from last month", tone: "success" },
+      { title: "Pending Approvals", value: "18", delta: "Needs review in 24 hours", tone: "warning" },
+      { title: "Open Tickets", value: "42", delta: "8 high priority", tone: "danger" },
+      { title: "System Uptime", value: "99.98%", delta: "Healthy", tone: "success" },
+    ],
+    []
+  );
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <Card title="Total Users" description="Overview of users">
-                        <p>Users: 120</p>
-                        <p>Companies: 8</p>
-                    </Card>
+  return (
+    <DashboardLayout allowedRoles={[ROLES.ADMIN]}>
+      <div className="space-y-6">
+        <PageHeader
+          title="Admin Dashboard"
+          description="Monitor platform performance, team activity, and access requests."
+          actionLabel="Export Report"
+          onAction={() => {}}
+        />
 
-                    <Card title="Pending Approvals" description="Approvals awaiting action">
-                        <p>New agents: 5</p>
-                        <p>New companies: 2</p>
-                    </Card>
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {kpis.map((item) => (
+            <KpiCard key={item.title} title={item.title} value={item.value} delta={item.delta} tone={item.tone} />
+          ))}
+        </section>
 
-                    <Card title="System Status" description="Server and API status">
-                        <p>API: Running</p>
-                        <p>Server: Healthy</p>
-                    </Card>
-                </div>
-            </div>
-        </DashboardLayout>
-    );
+        <DataTableCard
+          title="Approval Queue"
+          description="Items that need admin action"
+          columns={[
+            { key: "type", label: "Request" },
+            { key: "owner", label: "Owner" },
+            { key: "submittedAt", label: "Submitted" },
+            { key: "status", label: "Status", render: (value) => <StatusBadge status={value} /> },
+          ]}
+          rows={approvals}
+        />
+      </div>
+    </DashboardLayout>
+  );
 }

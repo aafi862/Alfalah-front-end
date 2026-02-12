@@ -1,36 +1,57 @@
 "use client";
 
-import Card from "@/components/common/Card";
+import { useMemo } from "react";
 import DashboardLayout from "../DashboardLayout";
 import { ROLES } from "@/lib/access-control";
+import PageHeader from "@/components/dashboard/PageHeader";
+import KpiCard from "@/components/dashboard/KpiCard";
+import DataTableCard, { StatusBadge } from "@/components/dashboard/DataTableCard";
+
+const userPolicies = [
+  { id: 1, policy: "Health Essential", coverage: "PKR 500,000", renewal: "12 Sep 2026", status: "Active" },
+  { id: 2, policy: "Car Protect", coverage: "PKR 1,200,000", renewal: "03 Dec 2026", status: "Active" },
+  { id: 3, policy: "Travel Shield", coverage: "PKR 300,000", renewal: "21 May 2026", status: "Pending" },
+];
 
 export default function UserDashboard() {
-    return (
-        <DashboardLayout allowedRoles={[ROLES.USER]}>
-            <div className="space-y-6">
-                <h1 className="text-2xl font-bold">User Dashboard</h1>
+  const kpis = useMemo(
+    () => [
+      { title: "Active Policies", value: "3", delta: "1 pending activation", tone: "warning" },
+      { title: "Open Claims", value: "1", delta: "Awaiting documents", tone: "warning" },
+      { title: "Premium Due", value: "PKR 12,400", delta: "Due in 5 days", tone: "danger" },
+      { title: "Support Tickets", value: "0", delta: "All clear", tone: "success" },
+    ],
+    []
+  );
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <Card title="Profile" description="View and edit your profile">
-                        <p>Name: John Doe</p>
-                        <p>Email: john@user.com</p>
-                    </Card>
+  return (
+    <DashboardLayout allowedRoles={[ROLES.USER]}>
+      <div className="space-y-6">
+        <PageHeader
+          title="User Dashboard"
+          description="Track your active coverage, premium schedule, and claim status."
+          actionLabel="Submit Claim"
+          onAction={() => {}}
+        />
 
-                    <Card title="Active Policies" description="Your current insurance policies">
-                        <ul className="list-disc pl-4">
-                            <li>Health Insurance - Active</li>
-                            <li>Car Insurance - Active</li>
-                        </ul>
-                    </Card>
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {kpis.map((item) => (
+            <KpiCard key={item.title} title={item.title} value={item.value} delta={item.delta} tone={item.tone} />
+          ))}
+        </section>
 
-                    <Card title="Notifications" description="Recent updates and alerts">
-                        <ul className="list-disc pl-4">
-                            <li>Policy renewal due in 5 days</li>
-                            <li>New message from support</li>
-                        </ul>
-                    </Card>
-                </div>
-            </div>
-        </DashboardLayout>
-    );
+        <DataTableCard
+          title="My Policies"
+          description="Coverage summary and renewal timeline"
+          columns={[
+            { key: "policy", label: "Policy" },
+            { key: "coverage", label: "Coverage" },
+            { key: "renewal", label: "Renewal Date" },
+            { key: "status", label: "Status", render: (value) => <StatusBadge status={value} /> },
+          ]}
+          rows={userPolicies}
+        />
+      </div>
+    </DashboardLayout>
+  );
 }
