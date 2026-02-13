@@ -1,13 +1,12 @@
 # Alfalah Front-End
 
-Next.js App Router project for Alfalah Insurance portal with role-based dashboards and Redux Toolkit + RTK Query.
+Enterprise-ready Next.js portal for Alfalah Insurance with RBAC (role + module + action), RTK Query API layer, and permission-aware dashboards.
 
 ## Stack
 
-- Next.js 16 (App Router)
+- Next.js 16 App Router
 - React 19
-- Redux Toolkit
-- RTK Query
+- Redux Toolkit + RTK Query
 - Tailwind CSS + shadcn/ui primitives
 
 ## Run
@@ -21,47 +20,63 @@ Open `http://localhost:3000`.
 
 ## Environment
 
-Create `.env` from `.env.example`:
+Use `.env`:
 
 ```bash
 NEXT_PUBLIC_API_URL=
 NEXT_PUBLIC_ENABLE_API_MOCK=true
 ```
 
-- Keep `NEXT_PUBLIC_ENABLE_API_MOCK=true` to use mocked API responses.
-- Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_ENABLE_API_MOCK=false` when backend is ready.
+- `NEXT_PUBLIC_ENABLE_API_MOCK=true` uses mock API responses.
+- Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_ENABLE_API_MOCK=false` when backend is available.
 
-## Auth Mock Accounts
+## Mock Role Emails
 
-Use any password with these email domains:
+Use any password with these domains:
 
-- `@admin.com` -> Admin dashboard
-- `@company.com` -> Company dashboard
-- `@agent.com` -> Agent dashboard
-- `@user.com` -> User dashboard
+- `@customer.com` -> Customer
+- `@agent.com` -> Agent
+- `@surveyor.com` -> Surveyor
+- `@underwriting.com` -> Underwriting
+- `@endorsement.com` -> Endorsement
+- `@compliance.com` -> Compliance
+- `@finance.com` -> Finance
+- `@head.com` -> Department Head
+- `@admin.com` -> Admin
 
-Example: `john@admin.com`
+Legacy support:
+
+- `@user.com` -> Customer (legacy)
+- `@company.com` -> Finance (legacy)
+
+## RBAC Design
+
+Defined in `lib/access-control.js`:
+
+- `ROLES`
+- `MODULES`
+- `ACTIONS` (`read`, `write`)
+- `ROLE_PERMISSIONS`
+- `getNavigationForRole(role)`
+- `resolveRouteAccess(pathname)`
+- `canAccess(role, module, action)`
 
 ## API Architecture
 
 - `app/Redux-store/services/baseApi.js`
-  - Central RTK Query `baseApi`
+  - Central RTK Query base API
   - Auth header injection
-  - 401 refresh token retry flow
-  - Mock-first fallback for local development
+  - 401 refresh flow
+  - Mock-first fallback
 - `app/Redux-store/services/authApi.js`
-  - Auth endpoints (`login` mutation)
+  - Auth mutation (`login`)
 
-## Route Structure
+## UI Notes
 
-- `/login`
-- `/dashboard/admin`
-- `/dashboard/admin/manage-users`
-- `/dashboard/agent`
-- `/dashboard/agent/leads`
-- `/dashboard/agent/tasks`
-- `/dashboard/company`
-- `/dashboard/company/policies`
-- `/dashboard/company/employees`
-- `/dashboard/user`
-- `/dashboard/user/settings`
+- Sidebar and auth pages use Bank Alfalah-inspired branding.
+- Official logo asset integrated at `public/branding/bank-alfalah-logo.webp`.
+- Dynamic role routes:
+  - `/dashboard/[role]`
+  - `/dashboard/[role]/[module]`
+
+Static legacy dashboards are still available for backward compatibility.

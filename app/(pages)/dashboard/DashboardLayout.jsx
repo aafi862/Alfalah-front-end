@@ -1,19 +1,27 @@
 "use client";
 
 import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "@/components/common/Sidebar";
 import FullPageLoader from "@/components/common/Loader";
 import Button from "@/components/common/Button";
 import { logout } from "@/app/Redux-store/slices/authSlice";
-import { getDashboardPathByRole, isValidRole } from "@/lib/access-control";
+import {
+  ACTIONS,
+  ROLE_LABELS,
+  canAccess,
+  getDashboardPathByRole,
+  isValidRole,
+  resolveRouteAccess,
+} from "@/lib/access-control";
 import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({ children, allowedRoles = [] }) {
   const auth = useSelector((state) => state.auth);
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch();
   const { isAuthenticated, role, isHydrated, user } = auth;
 
@@ -27,6 +35,12 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
     return allowedRoles.includes(role);
   }, [isAuthenticated, role, allowedRoles]);
 
+  const hasRouteAccess = useMemo(() => {
+    const routePolicy = resolveRouteAccess(pathname);
+    if (!routePolicy) return true;
+    return canAccess(role, routePolicy.module, routePolicy.action || ACTIONS.READ);
+  }, [pathname, role]);
+
   useEffect(() => {
     if (!isHydrated) return;
 
@@ -36,10 +50,10 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
       return;
     }
 
-    if (!isAllowedRole) {
+    if (!isAllowedRole || !hasRouteAccess) {
       router.replace(getDashboardPathByRole(role));
     }
-  }, [dispatch, isAuthenticated, isAllowedRole, isHydrated, role, router]);
+  }, [dispatch, hasRouteAccess, isAuthenticated, isAllowedRole, isHydrated, role, router]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -47,7 +61,7 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
     router.replace("/login");
   };
 
-  if (!isHydrated || !isAuthenticated || !isAllowedRole) {
+  if (!isHydrated || !isAuthenticated || !isAllowedRole || !hasRouteAccess) {
     return <FullPageLoader title="Checking access" subtitle="Redirecting..." />;
   }
 
@@ -68,7 +82,7 @@ export default function DashboardLayout({ children, allowedRoles = [] }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-slate-500">Insurance Portal</p>
-              <p className="text-sm font-semibold text-slate-800">Role: {role}</p>
+              <p className="text-sm font-semibold text-slate-800">Role: {ROLE_LABELS[role] || role}</p>
             </div>
 
             <Button

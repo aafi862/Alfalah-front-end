@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight, LogOut, PanelLeftClose, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, X } from "lucide-react";
 import Button from "./Button";
-import { NAVIGATION_BY_ROLE } from "@/lib/access-control";
+import { ROLE_LABELS, getNavigationForRole } from "@/lib/access-control";
 import { cn } from "@/lib/utils";
 
 export default function Sidebar({
@@ -17,7 +18,7 @@ export default function Sidebar({
   onCloseMobile,
 }) {
   const pathname = usePathname();
-  const links = NAVIGATION_BY_ROLE[role] || [];
+  const links = getNavigationForRole(role);
 
   return (
     <>
@@ -26,7 +27,7 @@ export default function Sidebar({
           type="button"
           onClick={onCloseMobile}
           aria-label="Close sidebar overlay"
-          className="fixed inset-0 z-30 bg-slate-950/40 md:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/45 md:hidden"
         />
       )}
 
@@ -38,24 +39,33 @@ export default function Sidebar({
         )}
       >
         <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white">A</div>
+          <Image
+            src="/branding/bank-alfalah-logo.webp"
+            alt="Bank Alfalah"
+            width={124}
+            height={32}
+            className={cn("h-8 w-auto", isCollapsed && "hidden")}
+            priority
+          />
 
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-slate-900">Alfalah Portal</p>
-              <p className="truncate text-xs text-slate-500">{userName || "Dashboard User"}</p>
-            </div>
-          )}
+          {isCollapsed && <div className="h-8 w-8 rounded-md bg-[#cf2027]" />}
 
           <button
             type="button"
             onClick={onCloseMobile}
-            className="rounded-md p-1 text-slate-500 hover:bg-slate-100 md:hidden"
+            className="ml-auto rounded-md p-1 text-slate-500 hover:bg-slate-100 md:hidden"
             aria-label="Close sidebar"
           >
             <X size={16} />
           </button>
         </div>
+
+        {!isCollapsed && (
+          <div className="border-b border-slate-200 px-4 py-3">
+            <p className="truncate text-sm font-semibold text-slate-900">{userName || "Alfalah User"}</p>
+            <p className="text-xs text-slate-500">{ROLE_LABELS[role] || "User"}</p>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-3">
           <ul className="space-y-1.5">
@@ -70,7 +80,7 @@ export default function Sidebar({
                     onClick={onCloseMobile}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      isActive ? "bg-[#cf2027] text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                     )}
                   >
                     <span
