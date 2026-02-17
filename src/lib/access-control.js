@@ -5,7 +5,6 @@ export const ACTIONS = Object.freeze({
 
 export const ROLES = Object.freeze({
   CUSTOMER: "customer",
-  USER: "user",
   AGENT: "agent",
   SURVEYOR: "surveyor",
   UNDERWRITING: "underwriting",
@@ -19,7 +18,6 @@ export const ROLES = Object.freeze({
 
 export const ROLE_LABELS = Object.freeze({
   [ROLES.CUSTOMER]: "Customer",
-  [ROLES.USER]: "Customer (Legacy)",
   [ROLES.AGENT]: "Agent",
   [ROLES.SURVEYOR]: "Surveyor",
   [ROLES.UNDERWRITING]: "Underwriting",
@@ -57,6 +55,7 @@ export const MODULES = Object.freeze({
   USER_MANAGEMENT: "user_management",
   LOOKUPS: "lookups",
   ATTRIBUTE_STUDIO: "attribute_studio",
+  TESTING: "testing",
 });
 
 const rw = [ACTIONS.READ, ACTIONS.WRITE];
@@ -70,14 +69,8 @@ export const ROLE_PERMISSIONS = Object.freeze({
     [MODULES.ENDORSEMENT_REQUESTS]: rw,
     [MODULES.RENEWALS]: rw,
     [MODULES.CAMPAIGNS]: ro,
-  },
-  [ROLES.USER]: {
-    [MODULES.DASHBOARD]: ro,
-    [MODULES.POLICY_INITIATION]: rw,
-    [MODULES.CLAIMS]: rw,
-    [MODULES.ENDORSEMENT_REQUESTS]: rw,
-    [MODULES.RENEWALS]: rw,
-    [MODULES.CAMPAIGNS]: ro,
+    [MODULES.TESTING]: rw,
+
   },
   [ROLES.AGENT]: {
     [MODULES.DASHBOARD]: ro,
@@ -143,11 +136,9 @@ const NAVIGATION_CATALOG = Object.freeze({
     { label: "Claims", href: "/dashboard/customer/claims", module: MODULES.CLAIMS },
     { label: "Renewals", href: "/dashboard/customer/renewals", module: MODULES.RENEWALS },
     { label: "Campaigns", href: "/dashboard/customer/campaigns", module: MODULES.CAMPAIGNS },
+    { label: "Testing", href: "/dashboard/customer/testing", module: MODULES.TESTING },
   ],
-  [ROLES.USER]: [
-    { label: "Overview", href: "/dashboard/user", module: MODULES.DASHBOARD },
-    { label: "Settings", href: "/dashboard/user/settings", module: MODULES.DASHBOARD },
-  ],
+
   [ROLES.AGENT]: [
     { label: "Overview", href: "/dashboard/agent", module: MODULES.DASHBOARD },
     { label: "Sales", href: "/dashboard/agent/sales", module: MODULES.SALES },
@@ -232,6 +223,7 @@ export const resolveRouteAccess = (pathname = "") => {
     ["/dashboard/customer/claims", MODULES.CLAIMS],
     ["/dashboard/customer/renewals", MODULES.RENEWALS],
     ["/dashboard/customer/campaigns", MODULES.CAMPAIGNS],
+    ["/dashboard/customer/testing", MODULES.TESTING],
     ["/dashboard/user/settings", MODULES.DASHBOARD],
     ["/dashboard/agent/sales", MODULES.SALES],
     ["/dashboard/agent/renewals", MODULES.RENEWALS],
@@ -257,6 +249,7 @@ export const resolveRouteAccess = (pathname = "") => {
     ["/dashboard/admin/users", MODULES.USER_MANAGEMENT],
     ["/dashboard/admin/lookups", MODULES.LOOKUPS],
     ["/dashboard/admin/manage-users", MODULES.USER_MANAGEMENT],
+
   ];
 
   const exact = routes.find(([route]) => pathname === route);
