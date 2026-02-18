@@ -20,13 +20,19 @@ export default function AppButton({
       variant={variant}
       size={size}
       disabled={loading || props.disabled}
-      className={clsx(fullWidth && "w-full", className)}
+      aria-busy={loading}
+      className={clsx(
+        fullWidth && "w-full",
+        loading || props.disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+        "flex items-center justify-center gap-2", // ensures loader and icons aligned
+        className
+      )}
       {...props}
     >
-      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-      {LeftIcon && !loading && <LeftIcon className="mr-2 h-4 w-4" />}
+      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      {!loading && LeftIcon && <LeftIcon className="h-4 w-4" />}
       {children}
-      {RightIcon && <RightIcon className="ml-2 h-4 w-4" />}
+      {RightIcon && <RightIcon className="h-4 w-4" />}
     </Button>
   );
 }

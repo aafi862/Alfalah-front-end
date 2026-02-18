@@ -1,17 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import PageHeader from "@/src/components/dashboard/PageHeader";
-import KpiCard from "@/src/components/dashboard/KpiCard";
-import DataTableCard, { StatusBadge } from "@/src/components/dashboard/DataTableCard";
-import Button from "@/src/components/common/Button";
-import { ACTIONS, canAccess } from "@/src/lib/access-control";
-
-const DEFAULT_COLUMNS = [
-  { key: "item", label: "Item" },
-  { key: "owner", label: "Owner" },
-  { key: "status", label: "Status" },
-];
+import PageHeader from "./PageHeader";
+import KpiCard from "./KpiCard";
+import DataTable from "@/src/components/common/data-table";
+import { canAccess } from "@/src/lib/access-control";
 
 export default function ModuleWorkspace({
   role,
@@ -21,10 +14,10 @@ export default function ModuleWorkspace({
   actionLabel = "Create",
   kpis = [],
   columns = [],
-  rows = [],
+  rows = [],// callback for action button clicks
+  onRowAction, // callback for action button clicks
 }) {
-  const writeAllowed = canAccess(role, module, ACTIONS.WRITE);
-
+  // Normalize rows if none provided
   const normalizedRows = useMemo(() => {
     const fallbackRows = [
       { id: 1, item: `${title} Queue`, owner: "Operations Team", status: "Active" },
@@ -35,45 +28,35 @@ export default function ModuleWorkspace({
     return baseRows.map((row) => ({ ...row }));
   }, [rows, title]);
 
-  const tableColumns = useMemo(() => {
-    const baseColumns = columns.length ? columns : DEFAULT_COLUMNS;
-    if (!writeAllowed) return baseColumns;
 
-    return [
-      ...baseColumns,
-      {
-        key: "actions",
-        label: "Actions",
-        render: () => (
-          <Button variant="outline" size="sm">
-            Update
-          </Button>
-        ),
-      },
-    ];
-  }, [columns, writeAllowed]);
+
 
   return (
     <div className="space-y-6">
-      <PageHeader title={title} description={description} actionLabel={writeAllowed ? actionLabel : undefined} onAction={() => { }} />
+      {/* {title && description && (
+        <PageHeader
+          title={title}
+          description={description}
+          actionLabel={actionLabel}
+          onAction={() => { }}
+        />
+      )} */}
 
       {kpis.length > 0 && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {kpis.map((item) => (
-            <KpiCard key={item.title} title={item.title} value={item.value} delta={item.delta} tone={item.tone} />
+            <KpiCard
+              key={item.title}
+              title={item.title}
+              value={item.value}
+              delta={item.delta}
+              tone={item.tone}
+            />
           ))}
         </section>
       )}
 
-      <DataTableCard
-        title={title}
-        description={writeAllowed ? "Write access enabled" : "Read only access"}
-        columns={tableColumns}
-        rows={normalizedRows.map((row) => ({
-          ...row,
-          status: row.status ? <StatusBadge status={row.status} /> : row.status,
-        }))}
-      />
+
     </div>
   );
 }
