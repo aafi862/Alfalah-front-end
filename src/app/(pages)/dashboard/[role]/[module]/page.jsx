@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import DashboardLayout from "../../DashboardLayout";
 import ModuleWorkspace from "@/src/components/dashboard/ModuleWorkspace";
 import { getNavigationForRole, getRoleFromPathSegment } from "@/src/lib/access-control";
@@ -18,36 +18,40 @@ export default function ModulePage() {
   const params = useParams();
 
   const roleParam = params?.role;
-  const module = params?.module;
+  const moduleParam = params?.module;
 
   const role = getRoleFromPathSegment(roleParam);
+  const nav = getNavigationForRole(role);
+  const selected = nav.find((item) => item.href.endsWith(`/${moduleParam}`));
 
-  // Handle invalid role
+  const columns = useMemo(
+    () => [
+      { accessorKey: "item", header: "Item" },
+      { accessorKey: "owner", header: "Owner" },
+      { accessorKey: "status", header: "Status" }, // DataTable handles badges elsewhere
+      { id: "actions", header: "Actions" },
+    ],
+    []
+  );
+
+  const rows = useMemo(() => {
+    const label = selected?.label || "Work";
+    return [
+      { id: 1, item: `${label} Queue`, owner: "Operations Team", status: "Active" },
+      { id: 2, item: `${label} Backlog`, owner: "Processing Team", status: "Pending" },
+      { id: 3, item: `${label} Escalations`, owner: "Support Team", status: "Overdue" },
+      { id: 4, item: `${label} Review`, owner: "QA Team", status: "Pending" },
+      { id: 5, item: `${label} Audit`, owner: "Audit Team", status: "Completed" },
+    ];
+  }, [selected]);
+
   if (!role) {
     return <div className="p-6 text-red-500">Invalid role.</div>;
   }
 
-  const nav = getNavigationForRole(role);
-  const selected = nav.find((item) => item.href.endsWith(`/${module}`));
-
   if (!selected) {
     return <div className="p-6 text-red-500">Module not found.</div>;
   }
-
-  const columns = useMemo(() => [
-    { accessorKey: "item", header: "Item" },
-    { accessorKey: "owner", header: "Owner" },
-    { accessorKey: "status", header: "Status" }, // Your DataTable auto-handles badge
-    { id: "actions", header: "Actions" },
-  ], []);
-
-  const rows = useMemo(() => [
-    { id: 1, item: `${selected.label} Queue`, owner: "Operations Team", status: "Active" },
-    { id: 2, item: `${selected.label} Backlog`, owner: "Processing Team", status: "Pending" },
-    { id: 3, item: `${selected.label} Escalations`, owner: "Support Team", status: "Overdue" },
-    { id: 4, item: `${selected.label} Review`, owner: "QA Team", status: "Pending" },
-    { id: 5, item: `${selected.label} Audit`, owner: "Audit Team", status: "Completed" },
-  ], [selected.label]);
 
   return (
     <DashboardLayout allowedRoles={[role]}>

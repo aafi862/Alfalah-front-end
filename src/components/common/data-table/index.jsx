@@ -21,7 +21,6 @@ import {
 import DataTablePagination from "./DataTablePagination";
 import Input from "@/src/components/common/Input";
 import { LoaderIcon, Edit2, Trash2, Plus } from "lucide-react";
-import clsx from "clsx";
 import Button from "@/src/components/common/Button";
 
 export default function DataTable({
