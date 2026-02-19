@@ -116,12 +116,12 @@ export default function DataTable({
     return (
         <div className="py-4">
             {/* Global search */}
-            <div className="flex justify-end mb-2">
+            <div className="flex justify-end mb-2 rounded">
                 <Input
                     placeholder="Search..."
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
-                    className="w-64"
+                    className="w-64 bg-white rounded-lg"
                 />
             </div>
 

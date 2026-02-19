@@ -25,7 +25,7 @@ export default function Input({
     <div className={cn("space-y-1", className)}>
       {label && <Label className="text-sm font-medium mb-3">{label}</Label>}
 
-      <div className="relative mt-1">
+      <div className="relative ">
         {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{prefix}</span>}
 
         <Comp

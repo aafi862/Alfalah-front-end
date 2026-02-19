@@ -74,10 +74,10 @@ export default function RolePageClient() {
         data={rows}
         enableEdit
         onEdit={(row) => alert("Edit " + row.item)}
-      // enableDelete={true}
-      // onDelete={(row) => alert("Delete " + row.item)}
-      // enableAdd={true}
-      // onAdd={(row) => alert("Add " + row.item)}
+        enableDelete={true}
+        onDelete={(row) => alert("Delete " + row.item)}
+        enableAdd={true}
+        onAdd={(row) => alert("Add " + row.item)}
       />
     </DashboardLayout>
   );
